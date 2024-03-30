@@ -37,15 +37,20 @@ func main() {
 	timer := time.NewTimer(time.Duration(*timeLimit) * time.Second)
 
 	for i, p := range problems {
+		fmt.Printf("Problem #%d: %s = \n", i + 1, p.q)
+
+		answerCh := make(chan string)
+		go func() {
+			var answer string // user's input
+			fmt.Scanf("%s\n", &answer)
+			answerCh <- answer
+		}()
 		select {
 		case <-timer.C:
 			fmt.Printf("Time ran out :( Score: %d/%d\n", score, len(problems))
 			return
-		default:
-			fmt.Printf("Problem #%d: %s = \n", i + 1, p.q)
-			var answer string // user's input
-			// note that scanf gets rid of spaces so might not be appropriate for string inputs
-			fmt.Scanf("%s\n", &answer)
+
+		case answer := <- answerCh:
 			if answer == p.a {
 				score++
 				fmt.Println("Correct!")
