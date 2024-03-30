@@ -1,11 +1,12 @@
 package main
 
-import ( 
+import (
 	"encoding/csv"
 	"flag"
 	"fmt"
 	"os"
 	"strings"
+	"time"
 )
 
 type problem struct {
@@ -15,6 +16,7 @@ type problem struct {
 
 func main() {
 	csvFilename := flag.String("csv", "problems.csv", "a csv file in the format of 'question,answer'")
+	timeLimit := flag.Int("limit", 30, "time limit for quiz in seconds")
 	flag.Parse()
 
 	file, err := os.Open(*csvFilename)
@@ -30,18 +32,26 @@ func main() {
 	}
 
 	problems := parseLines(lines)
-	score := 0
+	score := 0 
+
+	timer := time.NewTimer(time.Duration(*timeLimit) * time.Second)
 
 	for i, p := range problems {
-		fmt.Printf("Problem #%d: %s = \n", i + 1, p.q)
-		var answer string // user's input
-		// note that scanf gets rid of spaces so might not be appropriate for string inputs
-		fmt.Scanf("%s\n", &answer)
-		if answer == p.a {
-			score++
-			fmt.Println("Correct!")
-		} else {
-			fmt.Println("Incorrect :(")
+		select {
+		case <-timer.C:
+			fmt.Printf("Time ran out :( Score: %d/%d\n", score, len(problems))
+			return
+		default:
+			fmt.Printf("Problem #%d: %s = \n", i + 1, p.q)
+			var answer string // user's input
+			// note that scanf gets rid of spaces so might not be appropriate for string inputs
+			fmt.Scanf("%s\n", &answer)
+			if answer == p.a {
+				score++
+				fmt.Println("Correct!")
+			} else {
+				fmt.Println("Incorrect :(")
+			}
 		}
 	}
 
