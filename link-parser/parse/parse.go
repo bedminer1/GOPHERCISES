@@ -2,6 +2,7 @@ package link
 
 import (
 	"io"
+	"strings"
 
 	"golang.org/x/net/html"
 )
@@ -29,6 +30,7 @@ func Parse(r io.Reader) ([]Link, error) {
 	return links, nil
 }
 
+// dfs inorder traversal to access DOM elements and add them to slice
 func linkNodes(n *html.Node) []*html.Node {
 	if n.Type == html.ElementNode && n.Data == "a" {
 		return []*html.Node{n}
@@ -40,6 +42,7 @@ func linkNodes(n *html.Node) []*html.Node {
 	return ret
 }
 
+// takes in node and outputs Link struct
 func buildLink(n *html.Node) Link {
 	var ret Link
 	// parse href
@@ -53,10 +56,12 @@ func buildLink(n *html.Node) Link {
 	return ret
 }
 
+// parse inner text of a tags
 func parseText(n *html.Node) string {
 	if n.Type == html.TextNode {
 		return n.Data
 	}
+	// filter out random stuff like comments
 	if n.Type != html.ElementNode {
 		return ""
 	}
@@ -64,5 +69,5 @@ func parseText(n *html.Node) string {
 	for c := n.FirstChild; c != nil; c = c.NextSibling {
 		ret += parseText(c) + " "
 	}
-	return ret
+	return strings.Join(strings.Fields(ret), " ")
 }
