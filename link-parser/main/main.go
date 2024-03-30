@@ -11,6 +11,7 @@ var exampleHTML = `
 <html>
 	<body>
 		<a href="github.com/bedminer1">a link</a>
+		<a href="github.com/bedminer1/poop">a link 2</a>
 	</body>
 </html>
 `
