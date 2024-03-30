@@ -47,7 +47,7 @@ func main() {
 		}()
 		select {
 		case <-timer.C:
-			fmt.Printf("Time ran out :( Score: %d/%d\n", score, len(problems))
+			fmt.Printf("Time ran out :( - Score: %d/%d\n", score, len(problems))
 			return
 
 		case answer := <- answerCh:
