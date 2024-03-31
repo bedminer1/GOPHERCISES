@@ -55,8 +55,12 @@ func bfs(urlStr string, maxDepth int) []string {
 	}
 	for i := 0; i <= maxDepth; i++ {
 		q, nq = nq, make(map[string]struct{}) 
+		// optimize breaking at empty queues
+		if len(q) == 0 {
+			break
+		}
 		for url := range q {
-			// alr visited
+			// already visited
 			if _, ok := seen[url]; ok {
 				continue
 			}
@@ -66,6 +70,10 @@ func bfs(urlStr string, maxDepth int) []string {
 
 			// add children to next queue
 			for _, link := range getWebPage(url) {
+				// check for child in visited set
+				if _, ok := seen[link]; ok {
+					continue
+				}
 				nq[link] = struct{}{}
 			} 
 		}
