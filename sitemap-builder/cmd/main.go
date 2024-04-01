@@ -91,6 +91,7 @@ func getWebPage(urlStr string) []string {
 	// GET the webpage
 	resp, err := http.Get(urlStr)
 	if err != nil {
+		fmt.Println("Error: no links")
 		return []string{}
 	}
 	defer resp.Body.Close()
@@ -121,6 +122,7 @@ func getHrefs(r io.Reader, base string) []string {
 			hrefs = append(hrefs, l.Href)
 		}
 	}
+	// fmt.Println(hrefs, links)
 	return hrefs 
 }
 
